@@ -385,11 +385,11 @@ class Reservation extends AbstractType
         $call_result = $this->client->request($this::CALL_CODE_METHOD, $this->_getReservationCodeParameters());
         $xml_result = simplexml_load_string($call_result->getReservationCodesResult->any);
 
-        if($this->_checkResult($xml_result->NewDataSet->Table))
+        if($this->_checkResult($xml_result->NewDataSet->Table1))
         {
-            foreach($xml_result->NewDataSet->Table as $key => $codes)
+            foreach($xml_result->NewDataSet->Table1 as $key => $codes)
             {
-                $this->reservation_code_list->append( new ReservationCodeResult($xml_result->NewDataSet->Table) );
+                $this->reservation_code_list->append( new ReservationCodeResult($codes) );
             }
             return $this->reservation_code_list;
         } else {
@@ -403,9 +403,8 @@ class Reservation extends AbstractType
      */
     public function saveSeats()
     {
-        $this->reservation_code_list = new \ArrayObject();
         $call_result = $this->client->request($this::CALL_SAVE_METHOD, $this->_getSaveParameters());
-        $xml_result = simplexml_load_string($call_result->saveSeatsInfoResponse);
+        $xml_result = $call_result->saveSeatsInfoResult;
         return new ReservationSaleResult($xml_result);
     }
 
@@ -415,9 +414,10 @@ class Reservation extends AbstractType
      */
     public function makeSale()
     {
-        $this->reservation_code_list = new \ArrayObject();
         $call_result = $this->client->request($this::CALL_SOLD_METHOD, $this->_getSaleParameters());
-        $xml_result = simplexml_load_string($call_result->soldSeatsResponse);
+        print_r($call_result);
+        $xml_result = $call_result->soldSeatsResponse;
+        print_r($xml_result);die();
         return new ReservationSaveResult($xml_result);
     }
 
