@@ -61,9 +61,9 @@ class Destinations extends AbstractType {
     {
         $this->destinations = new \ArrayObject();
         $xml_result = simplexml_load_string($destinations->beginTerminalListResult->any);
-        if($this->_checkResult($xml_result))
+        if($this->_checkResult($xml_result->NewDataSet->Table1))
         {
-            foreach($xml_result->NewDataSet->Table as $item => $branches )
+            foreach($xml_result->NewDataSet->Table1 as $item => $branches )
             {
                 $this->destinations->append(new DestinationResult($branches));
             }

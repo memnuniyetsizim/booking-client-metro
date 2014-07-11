@@ -72,7 +72,6 @@ class Journey extends AbstractType{
      */
     public function setJourneyDate(\DateTime $journeyDate)
     {
-        echo $journeyDate->format('Y-m-d');
         $this->journeyDate = $journeyDate->format('Y-m-d');
     }
 
@@ -103,7 +102,7 @@ class Journey extends AbstractType{
         $xml_result = simplexml_load_string($result->getJourneyListResult->any);
         if($this->_checkResult($xml_result))
         {
-            foreach($xml_result->NewDataSet->Table as $item => $branches )
+            foreach($xml_result->NewDataSet->Table1 as $item => $branches )
             {
                 $this->journeys->append(new JourneyResult($branches));
             }
