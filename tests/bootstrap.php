@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Project: booking-client-metro
  * Author: Mehmet Ali Ergut ( memnuniyetsizim )
@@ -8,4 +7,3 @@
  */
 
 $loader = require_once __DIR__ . "/../vendor/autoload.php";
-$loader->add('MetroClient\\', __DIR__);
