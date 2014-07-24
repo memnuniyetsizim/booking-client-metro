@@ -10,6 +10,7 @@ namespace MetroClient\Type;
 
 
 use MetroClient\Service\Client;
+use MetroClient\Type\Error\ResponseException;
 
 /**
  * Class Bus
@@ -44,7 +45,10 @@ class Bus extends AbstractType {
      * @var
      */
     private $journey_no;
-
+    /**
+     * @var
+     */
+    protected $service_result;
     /**
      * Call method
      */
@@ -100,6 +104,14 @@ class Bus extends AbstractType {
     }
 
     /**
+     * @param mixed $service_result
+     */
+    public function setServiceResult($service_result)
+    {
+        $this->service_result = $service_result;
+    }
+
+    /**
      * @return array
      */
     private function _getParameters()
@@ -118,17 +130,23 @@ class Bus extends AbstractType {
     public function getBusSchema()
     {
         $call_result = $this->client->request($this::CALL_METHOD, $this->_getParameters());
-        return $this->parseResult($call_result);
+        $this->setServiceResult($call_result);
     }
 
     /**
-     * @param $result
-     * @return mixed
+     * @param mixed $mock_result
+     * @throws ResponseException
      */
-    public function parseResult($result)
+    public function getBusSchemaResult($mock_result = false)
     {
+        if(!$mock_result) {
+            $this->getBusSchema();
+        } else {
+            $this->setServiceResult($mock_result);
+        }
+
         $this->bus_schema = new \ArrayObject();
-        $xml_result = (array) $result->getBusSchemaResult;
+        $xml_result = (array) $this->service_result->getBusSchemaResult;
         if($this->_checkResult($xml_result['models.busSeats']))
         {
             foreach($xml_result['models.busSeats'] as $item => $seat )
@@ -137,7 +155,7 @@ class Bus extends AbstractType {
             }
             return $this->bus_schema;
         } else {
-            return false;
+            throw new ResponseException(ResponseException::SCHEME_ERROR);
         }
     }
 

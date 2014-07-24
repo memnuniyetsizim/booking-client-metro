@@ -65,13 +65,13 @@ class BusResult {
 
     function __construct($bus_schema)
     {
-        $this->setColumn($bus_schema->colNum);
-        $this->setFloor($bus_schema->floorNum);
-        $this->setGender($bus_schema->gender);
-        $this->setIsSold($bus_schema->isSold);
-        $this->setRow($bus_schema->rowNum);
-        $this->setSeatNo($bus_schema->seatNum);
-        $this->setSeatType($bus_schema->seatType);
+        $this->setColumn( isset($bus_schema->colNum)? $bus_schema->colNum:null );
+        $this->setFloor( isset($bus_schema->floorNum)? $bus_schema->floorNum:null );
+        $this->setGender( isset($bus_schema->gender)? $bus_schema->gender:null );
+        $this->setIsSold( isset($bus_schema->isSold)? $bus_schema->isSold:null );
+        $this->setRow( isset($bus_schema->rowNum)? $bus_schema->rowNum:null );
+        $this->setSeatNo( isset($bus_schema->seatNum)? $bus_schema->seatNum:null );
+        $this->setSeatType( isset($bus_schema->seatType)? $bus_schema->seatType:null );
     }
 
     /**

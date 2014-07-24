@@ -119,31 +119,31 @@ class JourneyResult {
 
     function __construct($journey)
     {
-        $this->setBeginCrossroadId($journey->BEGINARAYOLID);
-        $this->setBeginId($journey->BEGINID);
-        $this->setBusDescriptionId($journey->BUSDESCRIPTIONID);
-        $this->setBusType($journey->BUSTYPE);
-        $this->setCardPrice($journey->CARDPRICE);
-        $this->setDate($journey->TARIH);
-        $this->setDepartureStation($journey->BINIS);
-        $this->setDestinationStation($journey->INIS);
-        $this->setDiscountPrice($journey->DISCOUNTPRICE);
-        $this->setEndCrossroadId($journey->ENDARAYOLID);
-        $this->setEndHour($journey->ENDHOUR);
-        $this->setEndId($journey->ENDID);
-        $this->setExtraJourney($journey->EXTRASEFER);
-        $this->setIntPrice($journey->INTPRICE);
-        $this->setJourneyDescription($journey->JOURNEYDSC);
-        $this->setJourneyNo($journey->SEFERNO);
-        $this->setJourneyPath($journey->GUZERGAH);
-        $this->setLinkok($journey->LINKOK);
-        $this->setMultiType($journey->MULTITYPE);
-        $this->setOrderNo01($journey->SIRANO1);
-        $this->setOrderNo02($journey->SIRANO2);
-        $this->setPrice($journey->FIYAT);
-        $this->setRemainingSeats($journey->KALANKOLTUK);
-        $this->setSatilable($journey->SATILABLE);
-        $this->setStopHour($journey->STOPHOUR);
+        $this->setBeginCrossroadId( isset($journey->BEGINARAYOLID)? :null );
+        $this->setBeginId( isset($journey->BEGINID)? :null );
+        $this->setBusDescriptionId( isset($journey->BUSDESCRIPTIONID)? $journey->BUSDESCRIPTIONID:null );
+        $this->setBusType( isset($journey->BUSTYPE)? $journey->BUSTYPE:null );
+        $this->setCardPrice( isset($journey->CARDPRICE)? $journey->CARDPRICE:null );
+        $this->setDate( isset($journey->TARIH)? $journey->TARIH:null );
+        $this->setDepartureStation( isset($journey->BINIS)? $journey->BINIS:null );
+        $this->setDestinationStation( isset($journey->INIS)? $journey->INIS:null );
+        $this->setDiscountPrice( isset($journey->DISCOUNTPRICE)? $journey->DISCOUNTPRICE:null );
+        $this->setEndCrossroadId( isset($journey->ENDARAYOLID)? $journey->ENDARAYOLID:null );
+        $this->setEndHour( isset($journey->ENDHOUR)? $journey->ENDHOUR:null );
+        $this->setEndId( isset($journey->ENDID)? $journey->ENDID:null );
+        $this->setExtraJourney( isset($journey->EXTRASEFER)? $journey->EXTRASEFER:null );
+        $this->setIntPrice( isset($journey->INTPRICE)? $journey->INTPRICE:null );
+        $this->setJourneyDescription( isset($journey->JOURNEYDSC)? $journey->JOURNEYDSC:null );
+        $this->setJourneyNo( isset($journey->SEFERNO)? $journey->SEFERNO:null );
+        $this->setJourneyPath( isset($journey->GUZERGAH)? $journey->GUZERGAH:null );
+        $this->setLinkok( isset($journey->LINKOK)? $journey->LINKOK:null );
+        $this->setMultiType( isset($journey->MULTITYPE)? $journey->MULTITYPE:null );
+        $this->setOrderNo01( isset($journey->SIRANO1)? $journey->SIRANO1:null );
+        $this->setOrderNo02( isset($journey->SIRANO2)? $journey->SIRANO2:null );
+        $this->setPrice( isset($journey->FIYAT)? $journey->FIYAT:null );
+        $this->setRemainingSeats( isset($journey->KALANKOLTUK)? $journey->KALANKOLTUK:null );
+        $this->setSatilable( isset($journey->SATILABLE)? $journey->SATILABLE:null );
+        $this->setStopHour( isset($journey->STOPHOUR)? $journey->STOPHOUR:null );
     }
 
     /**
@@ -187,7 +187,7 @@ class JourneyResult {
     }
 
     /**
-     * @param mixed $bus_description
+     * @param mixed $bus_description_id
      */
     public function setBusDescriptionId($bus_description_id)
     {

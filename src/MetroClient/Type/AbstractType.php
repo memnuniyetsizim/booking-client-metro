@@ -8,10 +8,7 @@
 
 namespace MetroClient\Type;
 
-
-use MetroClient\Service\Client;
-
-class AbstractType {
+abstract class AbstractType {
 
     private $client;
     private $wsdl_url;

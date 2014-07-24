@@ -3,7 +3,7 @@
  * Project: booking-client-metro
  * Author: Mehmet Ali Ergut ( memnuniyetsizim )
  * Date: 03/07/14
- * Time: 09:31
+ * Time: 10:54
  */
 
 namespace MetroClient\Type;
@@ -24,13 +24,13 @@ class ReservationSaveResult {
      */
     function __construct($result)
     {
-        $this->is_sale = $result;
+        $this->setIsSale( ($result)?:false );
     }
 
     /**
      * @return mixed
      */
-    public function getIsSaled()
+    public function getIsSale()
     {
         return $this->is_sale;
     }
@@ -38,8 +38,9 @@ class ReservationSaveResult {
     /**
      * @param $is_sale
      */
-    public function setIsSaled($is_sale)
+    public function setIsSale($is_sale)
     {
         $this->is_sale = $is_sale;
     }
+
 } 

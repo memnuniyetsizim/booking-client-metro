@@ -21,7 +21,7 @@ class ReservationCodeResult {
 
     function __construct($code)
     {
-        $this->setReservationCode($code->COLUMN_VALUE);
+        $this->setReservationCode( isset($code->COLUMN_VALUE)? $code->COLUMN_VALUE:null );
     }
 
     /**

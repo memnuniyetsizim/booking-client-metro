@@ -10,10 +10,10 @@ namespace MetroClient\Type;
 
 
 /**
- * Class DestinationResult
+ * Class DestinationsResult
  * @package MetroClient\Type
  */
-class DestinationResult {
+class DestinationsResult {
     /**
      * @var
      */
@@ -32,9 +32,9 @@ class DestinationResult {
      */
     function __construct($destination)
     {
-        $this->setBranchCode($destination->BRANCHCODE);
-        $this->setBranchName($destination->BRANCHNAME);
-        $this->setCity($destination->CITY);
+        $this->setBranchCode( isset($destination->BRANCHCODE)? $destination->BRANCHCODE:null );
+        $this->setBranchName( isset($destination->BRANCHNAME)? $destination->BRANCHNAME:null );
+        $this->setCity( isset($destination->CITY)? $destination->CITY:null );
     }
 
     /**
