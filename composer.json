@@ -1,9 +1,8 @@
 {
-    "name": "RocketBus/booking-client-metro",
+    "name": "rocketbus/booking-client-metro",
     "description": "metro tourism booking client",
-    "license": "GPL-2.0+",
-    "version": "0.1",
-    "homepage": "https://github.com/RocketBus/booking-client-metro",
+    "license": "MIT",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Mehmet Ali Ergut",
@@ -11,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0",
+        "php": ">=5.4",
         "ext-curl": "*"
     },
     "require-dev": {
@@ -21,6 +20,5 @@
         "psr-0": {
             "MetroClient": "src/"
         }
-    },
-    "minimum-stability": "dev"
+    }
 }
