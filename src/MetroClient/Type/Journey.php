@@ -9,6 +9,7 @@
 namespace MetroClient\Type;
 
 use MetroClient\Service\Client;
+use MetroClient\Type\Error\ResponseException;
 
 
 /**
@@ -36,7 +37,10 @@ class Journey extends AbstractType{
      * @var
      */
     private $journeyDate;
-
+    /**
+     * @var
+     */
+    protected $service_result;
     /**
      * Call method
      */
@@ -75,6 +79,11 @@ class Journey extends AbstractType{
         $this->journeyDate = $journeyDate->format('Y-m-d');
     }
 
+    public function setServiceResult($result)
+    {
+        $this->service_result = $result;
+    }
+
     private function _getParameters()
     {
         return array('departure' => $this->departure,
@@ -89,26 +98,38 @@ class Journey extends AbstractType{
     public function getJourneyList()
     {
         $call_result = $this->client->request($this::CALL_METHOD, $this->_getParameters());
-        return $this->parseResult($call_result);
+        $this->setServiceResult($call_result);
     }
 
     /**
-     * @param $result
-     * @return mixed
+     * @param mixed $mock_result
+     * @throws ResponseException
      */
-    public function parseResult($result)
+    public function getJourneyResult($mock_result = false)
     {
-        $this->journeys = new \ArrayObject();
-        $xml_result = simplexml_load_string($result->getJourneyListResult->any);
-        if($this->_checkResult($xml_result))
-        {
-            foreach($xml_result->NewDataSet->Table1 as $item => $branches )
-            {
-                $this->journeys->append(new JourneyResult($branches));
-            }
-            return $this->journeys;
+        if(!$mock_result) {
+            $this->getJourneyList();
         } else {
-            return false;
+            $this->setServiceResult($mock_result);
+        }
+
+        $this->journeys = new \ArrayObject();
+        $xml_result = simplexml_load_string($this->service_result->getJourneyListResult->any);
+        try
+        {
+            foreach($xml_result->NewDataSet as $table_data )
+            {
+                foreach($table_data as $item => $branches )
+                {
+                    $branches = json_decode(json_encode($branches, JSON_FORCE_OBJECT));
+                    $this->journeys->append(new JourneyResult($branches));
+                }
+            }
+
+            return $this->journeys;
+
+        } catch (\Exception $e) {
+            throw new ResponseException(ResponseException::EMPTY_RESULT);
         }
     }
 

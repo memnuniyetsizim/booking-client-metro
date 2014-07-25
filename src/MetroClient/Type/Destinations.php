@@ -9,6 +9,7 @@
 namespace MetroClient\Type;
 
 use MetroClient\Service\Client;
+use MetroClient\Type\Error\ResponseException;
 
 /**
  * Class Destinations
@@ -24,6 +25,10 @@ class Destinations extends AbstractType {
      */
     private $client;
     /**
+     * @var
+     */
+    protected $service_result;
+    /**
      * Call method
      */
     const CALL_BEGIN_METHOD = 'beginTerminalList';
@@ -35,12 +40,20 @@ class Destinations extends AbstractType {
     }
 
     /**
+     * @param mixed $service_result
+     */
+    public function setServiceResult($service_result)
+    {
+        $this->service_result = $service_result;
+    }
+
+    /**
      * @return mixed
      */
     public function getBeginDestinations()
     {
         $call_result = $this->client->request($this::CALL_BEGIN_METHOD);
-        return $this->parseResult($call_result);
+        $this->setServiceResult($call_result);
     }
 
     /**
@@ -50,26 +63,37 @@ class Destinations extends AbstractType {
     public function getEndDestinations()
     {
         $call_result = $this->client->request($this::CALL_END_METHOD);
-        return $this->parseResult($call_result);
+        $this->setServiceResult($call_result);
     }
 
     /**
-     * @param $destinations
-     * @return array|void
+     * @param mixed $mock_result
+     * @throws ResponseException
      */
-    public function parseResult($destinations)
+    public function getBeginDestinationsResult($mock_result = false)
     {
-        $this->destinations = new \ArrayObject();
-        $xml_result = simplexml_load_string($destinations->beginTerminalListResult->any);
-        if($this->_checkResult($xml_result->NewDataSet->Table1))
+        if(!$mock_result)
         {
-            foreach($xml_result->NewDataSet->Table1 as $item => $branches )
+            $this->getBeginDestinations();
+        } else {
+            $this->setServiceResult($mock_result);
+        }
+
+
+        $this->destinations = new \ArrayObject();
+        $xml_result = simplexml_load_string($this->service_result->beginTerminalListResult->any);
+        try {
+            foreach($xml_result->NewDataSet as $table_data)
             {
-                $this->destinations->append(new DestinationResult($branches));
+                foreach($table_data as $item => $branches )
+                {
+                    $this->destinations->append(new DestinationsResult($branches));
+                }
             }
             return $this->destinations;
-        } else {
-            return false;
+        } catch (\Exception $e)
+        {
+            throw new ResponseException(ResponseException::EMPTY_DESTINATION_LIST);
         }
     }
 

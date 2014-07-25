@@ -9,6 +9,7 @@
 namespace MetroClient\Type;
 
 use MetroClient\Service\Client;
+use MetroClient\Type\Error\ResponseException;
 
 /**
  * Class Reservation
@@ -25,41 +26,136 @@ class Reservation extends AbstractType
      */
     private $client;
 
+    /**
+     * @var
+     */
     private $journey_no;
+    /**
+     * @var
+     */
     private $journey_date;
+    /**
+     * @var
+     */
     private $seat_no;
+    /**
+     * @var
+     */
     private $order_no_01;
+    /**
+     * @var
+     */
     private $order_no_02;
 
+    /**
+     * @var
+     */
     private $reservation_codes;
+    /**
+     * @var string
+     */
     private $company_code = 'METRO';
+    /**
+     * @var
+     */
     private $customer_code;
+    /**
+     * @var
+     */
     private $journey_path;
+    /**
+     * @var
+     */
     private $journey_hour;
+    /**
+     * @var
+     */
     private $stop_hour;
+    /**
+     * @var
+     */
     private $end_hour;
+    /**
+     * @var
+     */
     private $customer_name;
+    /**
+     * @var
+     */
     private $customer_surname;
+    /**
+     * @var
+     */
     private $customer_tel;
+    /**
+     * @var
+     */
     private $customer_email;
+    /**
+     * @var
+     */
     private $customer_gender;
+    /**
+     * @var
+     */
     private $amount;
+    /**
+     * @var
+     */
     private $terminal_begin_id;
+    /**
+     * @var
+     */
     private $terminal_end_id;
+    /**
+     * @var
+     */
     private $begin_crossroad_id;
+    /**
+     * @var
+     */
     private $end_crossroad_id;
+    /**
+     * @var
+     */
     private $departure_station;
+    /**
+     * @var
+     */
     private $destination_station;
+    /**
+     * @var
+     */
     private $departure_service;
+    /**
+     * @var
+     */
     private $destination_service;
+    /**
+     * @var
+     */
     private $extra_message;
+    /**
+     * @var
+     */
     private $card_info;
+
+    /**
+     * @var
+     */
+    protected $service_result;
 
     /**
      * Call methods
      */
     const CALL_CODE_METHOD = 'getReservationCodes';
+    /**
+     *
+     */
     const CALL_SAVE_METHOD = 'saveSeatsInfo';
+    /**
+     *
+     */
     const CALL_SOLD_METHOD = 'soldSeats';
 
     /**
@@ -364,6 +460,13 @@ class Reservation extends AbstractType
         );
     }
 
+    /**
+     * @param $result
+     */
+    public function setServiceResult($result)
+    {
+        $this->service_result = $result;
+    }
 
     /**
      * @return array
@@ -371,7 +474,8 @@ class Reservation extends AbstractType
     private function _getSaleParameters()
     {
         return array(
-            'amount' => $this->amount,
+            'refNo' => $this->reservation_codes,
+            'AMOUNT' => $this->amount,
             'cardInfo' => $this->card_info
         );
     }
@@ -381,53 +485,103 @@ class Reservation extends AbstractType
      */
     public function getReservationCode()
     {
-        $this->reservation_code_list = new \ArrayObject();
         $call_result = $this->client->request($this::CALL_CODE_METHOD, $this->_getReservationCodeParameters());
-        $xml_result = simplexml_load_string($call_result->getReservationCodesResult->any);
+        $this->setServiceResult($call_result);
+    }
 
-        if($this->_checkResult($xml_result->NewDataSet->Table1))
+    /**
+     * @param mixed $mock_result
+     * @throws ResponseException
+     */
+    public function getReservationCodeResult($mock_result = false)
+    {
+        if(!$mock_result)
         {
-            foreach($xml_result->NewDataSet->Table1 as $key => $codes)
+            $this->getReservationCode();
+        } else {
+            $this->setServiceResult($mock_result);
+        }
+
+        $this->reservation_code_list = new \ArrayObject();
+        $xml_result = simplexml_load_string($this->service_result->getReservationCodesResult->any);
+
+        try
+        {
+            foreach($xml_result->NewDataSet as $table_data)
             {
-                $this->reservation_code_list->append( new ReservationCodeResult($codes) );
+                foreach($table_data as $key => $codes)
+                {
+                    $codes = json_decode(json_encode($codes, JSON_FORCE_OBJECT));
+                    $this->reservation_code_list->append( new ReservationCodeResult($codes) );
+                }
             }
             return $this->reservation_code_list;
-        } else {
-            return false;
+        } catch (\Exception $e)
+        {
+            throw new ResponseException(ResponseException::GET_RESERVATION_CODE_ERROR);
         }
     }
 
     /**
      * @return array|bool
-     * @throws \Exception
+     * @throws ResponseException
      */
     public function saveSeats()
     {
         $call_result = $this->client->request($this::CALL_SAVE_METHOD, $this->_getSaveParameters());
-        $xml_result = $call_result->saveSeatsInfoResult;
-        return new ReservationSaleResult($xml_result);
+
+        if(!$call_result)
+            throw new ResponseException(ResponseException::SAVE_SEAT_ERROR);
+
+        $this->setServiceResult($call_result);
     }
 
     /**
-     * @return array|bool
-     * @throws \Exception
+     * @param mixed $mock_result
+     * @return ReservationSaleResult
+     */
+    public function saveSeatsResult($mock_result = false)
+    {
+        if(!$mock_result)
+        {
+            $this->saveSeats();
+        } else {
+            $this->setServiceResult($mock_result);
+        }
+
+        return new ReservationSaveResult($this->service_result->saveSeatsInfoResult);
+    }
+
+    /**
+     * @throws ResponseException
      */
     public function makeSale()
     {
         $call_result = $this->client->request($this::CALL_SOLD_METHOD, $this->_getSaleParameters());
-        print_r($call_result);
-        $xml_result = $call_result->soldSeatsResponse;
-        print_r($xml_result);die();
-        return new ReservationSaveResult($xml_result);
+
+        if(!$call_result)
+            throw new ResponseException(ResponseException::SALE_ERROR);
+
+        $this->setServiceResult($call_result);
     }
 
     /**
-     * @param $result
-     * @return mixed
+     * @param mixed $mock_result
+     * @return ReservationSaveResult
+     * @throws ResponseException
      */
-    public function parseResult($result)
+    public function makeSaleResult($mock_result = false)
     {
-        return;
+        if(!$mock_result) {
+            $this->makeSale();
+        } else {
+            $this->setServiceResult($mock_result);
+        }
+
+        if(isset($this->service_result->errorMessage))
+            throw new ResponseException(ResponseException::SALE_ERROR);
+
+        return new ReservationSaleResult($this->service_result);
     }
 
     /**
