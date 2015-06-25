@@ -83,9 +83,7 @@ class Client {
         $auth_header = $this->setHeaderXML();
         $this->soap_client->__setSoapHeaders(array($auth_header));
         try {
-            $a = $this->soap_client->__soapCall($method, array('parameters' => $params));
-            file_put_contents('/var/www/mock.xml',$this->soap_client->__getLastResponse(), FILE_APPEND);
-            return $a;
+            return $this->soap_client->__soapCall($method, array('parameters' => $params));
         } catch (\Exception $e)
         {
             throw new SoapException(SoapException::SERVICE_ERROR);
